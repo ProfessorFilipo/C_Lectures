@@ -151,21 +151,21 @@ void PosicionaBombas(int *Tabuleiro, int N, int qtBombas)
 int AbreEspacos(int* Tabuleiro, int* TabVisual, int N, int Y, int X)
 {
 	int cont = 0;
-	
+	//printf(":: Y: %d X: %d \n", Y, X);	
 	if( Tabuleiro[idx(Y, X, N)] == 0 && 
 	    TabVisual[idx(Y, X, N)] == _OCULTA_ )
 	{
 			TabVisual[idx(Y, X, N)] = _MOSTRA_;
 			cont++;
 			
-			if( Y > 0 )                  if( TabVisual[idx(Y-1, X,   N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y-1, X,   N); // acima
-			if( Y < (N-1) )              if( TabVisual[idx(Y+1, X,   N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y+1, X,   N); // abaixo
-			if( X < (N-1) )              if( TabVisual[idx(Y,   X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y,   X+1, N); // direita
-			if( X > 0 )                  if( TabVisual[idx(Y,   X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y,   X-1, N); // esquerda
-			if( Y > 0 && X < (N-1) )     if( TabVisual[idx(Y-1, X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y-1, X+1, N); // diag sup dir
-			if( Y > 0 && X > 0 )         if( TabVisual[idx(Y-1, X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y-1, X-1, N); // diag sup esq
-			if( Y < (N-1) && X < (N-1) ) if( TabVisual[idx(Y+1, X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y+1, X+1, N); // diag inf dir
-			if( Y < (N-1) && X > 0 )     if( TabVisual[idx(Y+1, X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, Y+1, X-1, N); // diag inf esq
+			if( Y > 0 )                  if( TabVisual[idx(Y-1, X,   N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y-1, X   ); // acima
+			if( Y < (N-1) )              if( TabVisual[idx(Y+1, X,   N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y+1, X   ); // abaixo
+			if( X < (N-1) )              if( TabVisual[idx(Y,   X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y,   X+1 ); // direita
+			if( X > 0 )                  if( TabVisual[idx(Y,   X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y,   X-1 ); // esquerda
+			if( Y > 0 && X < (N-1) )     if( TabVisual[idx(Y-1, X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y-1, X+1 ); // diag sup dir
+			if( Y > 0 && X > 0 )         if( TabVisual[idx(Y-1, X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y-1, X-1 ); // diag sup esq
+			if( Y < (N-1) && X < (N-1) ) if( TabVisual[idx(Y+1, X+1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y+1, X+1 ); // diag inf dir
+			if( Y < (N-1) && X > 0 )     if( TabVisual[idx(Y+1, X-1, N)] == _OCULTA_ ) cont += AbreEspacos(Tabuleiro, TabVisual, N, Y+1, X-1 ); // diag inf esq
 			
 	}
 	
@@ -221,7 +221,7 @@ int main()
 	PosicionaBombas(Tabuleiro, N, qtBombas);
 	ContaBombas    (Tabuleiro, N);
 	LimpaTabuleiro (TabVisual, N);
-	int cont = AbreEspacos(Tabuleiro, TabVisual, 6, 6, N);
+	int cont = AbreEspacos(Tabuleiro, TabVisual, N, 0, 0);
 	printf("\n"); CheatMode=false;
 	MostraTabuleiro(Tabuleiro, TabVisual, N);
 	printf("\n"); CheatMode=true;
