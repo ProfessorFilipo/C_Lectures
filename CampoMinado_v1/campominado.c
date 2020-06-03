@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define _QtBombas_  5
 #define _Height_   10 
@@ -19,7 +20,8 @@
 int AbreArea( int Tabuleiro[_Height_][_Width_],
               int TabVisual[_Height_][_Width_],
               int X /*coluna */,
-              int Y /* linha */)
+              int Y /* linha */, 
+              bool celulaAntVazia)
 {
      int cont = 0;
     
@@ -32,10 +34,17 @@ int AbreArea( int Tabuleiro[_Height_][_Width_],
         TabVisual[Y][X] = _ABERTA_;
         cont++;
        
-       if( Y > 0 )              if( TabVisual[Y-1][X] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X, Y-1); // conta acima
-       if( Y < (_Height_ - 1))  if( TabVisual[Y+1][X] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X, Y+1); // conta abaixo
-       if( X < (_Width_ - 1 ))  if( TabVisual[Y][X+1] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X+1, Y); // conta a direita
-       if( X > 0 )              if( TabVisual[Y][X-1] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X-1, Y); // conta a direita
+       if( Y > 0 )              if( TabVisual[Y-1][X] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X, Y-1, true); // conta acima
+       if( Y < (_Height_ - 1))  if( TabVisual[Y+1][X] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X, Y+1, true); // conta abaixo
+       if( X < (_Width_ - 1 ))  if( TabVisual[Y][X+1] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X+1, Y, true); // conta a direita
+       if( X > 0 )              if( TabVisual[Y][X-1] == _FECHADA_ ) cont+= AbreArea(Tabuleiro, TabVisual, X-1, Y, true); // conta a direita
+     }
+     else if ( TabVisual[Y][X] == _FECHADA_ && Tabuleiro[Y][X] > 0 && Tabuleiro[Y][X] <=8 && celulaAntVazia )
+     {
+        // se a célula selecionada possui uma contagem, esta fechada e foi chamada
+        // a partir de uma célula vazia e aberta, entao a abre.
+        TabVisual[Y][X] = _ABERTA_;
+        cont++;
      }
      
      return ( cont );
@@ -168,7 +177,7 @@ int main()
 
     int L, C;
 
-    //srand(time(NULL)); // inicia a semente do randomizador
+    srand(time(NULL)); // inicia a semente do randomizador
 
     // teste: abre tabuleiro
     for (L = 0; L < _Height_; L++)
@@ -184,7 +193,7 @@ int main()
    TabVisual[6][6] = _ABERTA_; */
 
     MontaTabuleiro(Tabuleiro);
-    int cont = AbreArea( Tabuleiro, TabVisual, 0, 0);
+    int cont = AbreArea( Tabuleiro, TabVisual, 0, 0, false);
   
     MostraTabuleiro(Tabuleiro, TabVisual);
 
