@@ -121,7 +121,8 @@ int main()
         }
     }
 
-	double tempoProcessamento = ((double)tempo) / (double)(CLOCKS_PER_SEC/1000);
+	clock_t final = clock();
+	double tempoProcessamento = ((double)(final-tempo)) / (double)(CLOCKS_PER_SEC);
 	
 	printf("Calculation is done! Now saving data on the disc...\n");
     //MostraMatriz(N, N, Mc, " Matriz C ");
