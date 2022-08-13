@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 
 #define _Humano_   1
 #define _IA_      -1
@@ -27,6 +28,28 @@ typedef struct Jogada_t
 void clrscr()
 {
     system("@cls||clear");
+}
+
+int min(int X, int Y)
+{
+	int retorno = Y;
+	
+	if(X <= Y)
+	{
+		retorno = X;
+	}
+	return retorno;
+}
+
+int max(int X, int Y)
+{
+	int retorno = Y;
+	
+	if(X >= Y)
+	{
+		retorno = X;
+	}
+	return retorno;
 }
 
 void InsereEspacos(int quantidade)
@@ -89,7 +112,7 @@ void Cabecalho()
     printf("*************************************************************\n");
     printf("*************************************************************\n");
     printf("*** by The Retro Modern Professor                         ***\n");
-    printf("*** version 0.1 - dummy AI ::: 2022-aug-07                ***\n");
+    printf("*** version 1.0 - MiniMax AI ::: 2022-aug-07              ***\n");
     printf("*************************************************************\n");
     printf("*************************************************************\n");
 
