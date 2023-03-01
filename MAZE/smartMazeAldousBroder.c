@@ -353,7 +353,7 @@ void AldousBroderMaze(int Maze[N][N])
 			switch (guess)
 			{
 			case 0: // top
-				if (currentCellLine >= 0)
+				if (currentCellLine > 0)
 				{
 					neighCellLine   = currentCellLine - 1;
 					neighCellColumn = currentCellColumn;
