@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <Windows.h>
-#include <conio.h>
 
 #define N            10
 #define BlockedCell 178
@@ -53,15 +52,27 @@ void ResetBoard(Tile Board[N][N], int NumberOfBlockedTiles)
 		}
 	}
 
+	// chuck norris approuch for 
 	// generate some random blocked tiles
 	// ==>> why not switch it for a mazzle generator? ;-)
 	for (k = 0; k < NumberOfBlockedTiles; k++)
 	{
-		line   = rand() % N;
-		column = rand() % N;
+		// make sure each new blocked tile
+		// will occupy a different position
+		bool found = false;
+		do
+		{
+			line   = rand() % N;
+			column = rand() % N;
+			found = false;
+
+			// check if this position is already blocked
+			if (Board[line][column].Blocked) found = true;
+
+		} while (found);
+
 		Board[line][column].Blocked = true;
 	}
-
 }
 
 void DisplayBoard(Tile Board[N][N], Character* characterList, int listNumber)
@@ -167,36 +178,65 @@ void gotoXY(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 
+void BEEP()
+{
+	// beep function [for windows only]
+	Beep(750, 800);
+}
+
 int main()
 {
 	Tile Board[N][N];
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	// character list
-	Character* characterList = malloc(sizeof(Character) * 2);
+	Character* characterList = (Character*)malloc(sizeof(Character) * 2);
 	if (characterList == NULL)
 	{
 		printf("\nError allocating memory for game characters. Living now...\n");
 		exit( EXIT_FAILURE );
 	}
 
+	ResetBoard(Board, 35);
+
+	// make sure the NPC will be
+	// put in a free tile
+	bool found = false; int line, column;
+	do
+	{
+		line   = rand() % N;
+		column = rand() % N;
+		found  = false;
+		if (Board[line][column].Blocked) found = true;
+
+	} while (found);
+
 	// NPC
 	characterList[0].Active  = true;
 	characterList[0].Alive   = true;
 	characterList[0].Stamina = 10;
 	characterList[0].Type    = NPC;
-	characterList[0].Line    = rand() % N;
-	characterList[0].Column  = rand() % N;
+	characterList[0].Line    = line;
+	characterList[0].Column  = column;
+
+
+	// find a empty tile for the hooman player
+	do
+	{
+		line   = rand() % N;
+		column = rand() % N;
+		found  = false;
+		if (Board[line][column].Blocked || (characterList[0].Line == line && characterList[0].Column== column)) found = true;
+
+	} while (found);
 
 	// Player (hooman)
 	characterList[1].Active  = true;
 	characterList[1].Alive   = true;
 	characterList[1].Stamina = 10;
 	characterList[1].Type    = Player;
-	characterList[1].Line    = rand() % N;
-	characterList[1].Column  = rand() % N;
-
-	ResetBoard(Board, 15);
+	characterList[1].Line    = line;
+	characterList[1].Column  = column;
 
 	bool runGame = true;
 	while (runGame) // master loop
@@ -212,53 +252,57 @@ int main()
 			case 72:  // up arrow
 			case 87:  // w
 			case 119: // W
-				if (characterList[1].Line > 0)
+				if (characterList[1].Line <= 0 || Board[characterList[1].Line - 1][characterList[1].Column].Blocked)
 				{
-					if (!Board[characterList[1].Line - 1][characterList[1].Column].Blocked)
-					{
-						// moviment only allowed if the Player is under the top line
-						// and there is no cell blocking.
-						characterList[1].Line--;
-						if (characterList[1].Line < 0) characterList[1].Line = 0;
-					}
+					BEEP();
+				}
+				else
+				{
+					// moviment only allowed if the Player is under the top line
+					// and there is no cell blocking.
+					characterList[1].Line--;
+					if (characterList[1].Line < 0) characterList[1].Line = 0;
 				}
 				break;
 			case 65: // A
 			case 75: // left arrow
 			case 97: // a
-				if (characterList[1].Column > 0)
+				if (characterList[1].Column <= 0 || Board[characterList[1].Line][characterList[1].Column - 1].Blocked)
 				{
-					if (!Board[characterList[1].Line][characterList[1].Column - 1].Blocked)
-					{
-						characterList[1].Column--;
-						if (characterList[1].Column < 0) characterList[1].Column = 0;
-					}
+					BEEP();
+				}
+				else
+				{
+					characterList[1].Column--;
+					if (characterList[1].Column < 0) characterList[1].Column = 0;
 				}
 				break;
 			case 77:  // right arrow
 			case 68:  // D
 			case 100: // d
-				if (characterList[1].Column < (N - 1))
+				if (characterList[1].Column >= (N - 1) || Board[characterList[1].Line][characterList[1].Column + 1].Blocked)
 				{
-					if (!Board[characterList[1].Line][characterList[1].Column + 1].Blocked)
-					{
-						characterList[1].Column++;
-						if (characterList[1].Column >= N) characterList[1].Column = N - 1;
-					}
+					BEEP();
+				}
+				else
+				{
+					characterList[1].Column++;
+					if (characterList[1].Column >= N) characterList[1].Column = N - 1;
 				}
 				break;
 			case 80:  // down arrow
 			case 83:  // S
 			case 115: // s
-				if (characterList[1].Line < (N - 1))
+				if (characterList[1].Line >= (N - 1) || Board[characterList[1].Line + 1][characterList[1].Column].Blocked)
 				{
-					if (!Board[characterList[1].Line + 1][characterList[1].Column].Blocked)
-					{
-						// moviment only allowed if the Player is over the bottom line
-						// and there is no cell blocking.
-						characterList[1].Line++;
-						if (characterList[1].Line >(N-1)) characterList[1].Line = N-1;
-					}
+					BEEP();
+				}
+				else
+				{
+					// moviment only allowed if the Player is over the bottom line
+					// and there is no cell blocking.
+					characterList[1].Line++;
+					if (characterList[1].Line >(N-1)) characterList[1].Line = N-1;
 				}
 				break;
 			case 27: // esc
@@ -268,15 +312,11 @@ int main()
 			default:
 				break;
 			}
-			//printf("%c ::: %d     \n", kbCode, kbCode);
-			//kbCode = 0;
 		}
 
 		gotoXY(0, 0);
 		DisplayBoard(Board, characterList, 2);
 	}
-
-
 
 	return (0);
 }
